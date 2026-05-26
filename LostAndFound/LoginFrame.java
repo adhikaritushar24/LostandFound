@@ -1,125 +1,389 @@
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 
 public class LoginFrame extends JFrame {
 
     private JTextField txtUsername;
     private JPasswordField txtPassword;
     private JButton btnLogin, btnRegister;
-    private JLabel lblMessage;
+    private JLabel lblError;
+
+    // ---- Theme colours ----
+    private static final Color DARK_BG = new Color(15, 35, 80);
+    private static final Color CARD_BG = new Color(255, 255, 255);
+    private static final Color ACCENT = new Color(25, 95, 210);
+    private static final Color ACCENT_HOV = new Color(15, 75, 180);
+    private static final Color REG_COLOR = new Color(34, 160, 100);
+    private static final Color REG_HOV = new Color(24, 130, 78);
+    private static final Color INPUT_BG = new Color(248, 250, 255);
+    private static final Color INPUT_BDR = new Color(210, 220, 240);
+    private static final Color LABEL_CLR = new Color(45, 60, 90);
+    private static final Color ERROR_CLR = new Color(200, 50, 50);
 
     public LoginFrame() {
-        setTitle("Lost & Found System - Login");
-        setSize(420, 320);
+        setTitle("Lost & Found — Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setResizable(false);
+        setSize(440, 560);
+        setLocationRelativeTo(null);
 
-        // Main panel with background color
-        JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new Color(30, 60, 114));
-        mainPanel.setLayout(null);
+        // ---- Root panel with dark gradient background ----
+        JPanel root = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                GradientPaint gp = new GradientPaint(
+                        0, 0, new Color(10, 25, 65),
+                        getWidth(), getHeight(), new Color(25, 60, 130));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        root.setOpaque(true);
 
-        // Title label
-        JLabel lblTitle = new JLabel("Lost & Found System", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
-        lblTitle.setForeground(Color.WHITE);
-        lblTitle.setBounds(0, 20, 420, 35);
-        mainPanel.add(lblTitle);
+        // ---- Card panel ----
+        JPanel card = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(CARD_BG);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 22, 22);
+                g2.dispose();
+            }
 
-        JLabel lblSub = new JLabel("Please login to continue", SwingConstants.CENTER);
-        lblSub.setFont(new Font("Arial", Font.PLAIN, 12));
-        lblSub.setForeground(new Color(180, 200, 255));
-        lblSub.setBounds(0, 55, 420, 20);
-        mainPanel.add(lblSub);
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+        };
+        card.setPreferredSize(new Dimension(360, 460));
+        card.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // White form panel
-        JPanel formPanel = new JPanel();
-        formPanel.setBackground(Color.WHITE);
-        formPanel.setLayout(null);
-        formPanel.setBounds(40, 90, 340, 185);
-        formPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 210, 230)));
-        mainPanel.add(formPanel);
+        // ---- Card header (top coloured strip) ----
+        JPanel cardHeader = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(0, 0, ACCENT, getWidth(), 0, new Color(60, 130, 230));
+                g2.setPaint(gp);
+                // fill rounded top + square bottom so it merges with card
+                g2.fillRoundRect(0, 0, getWidth(), getHeight() + 22, 22, 22);
+                g2.dispose();
+            }
 
-        JLabel lblUser = new JLabel("Username:");
-        lblUser.setFont(new Font("Arial", Font.PLAIN, 13));
-        lblUser.setBounds(20, 20, 90, 25);
-        formPanel.add(lblUser);
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+        };
+        cardHeader.setPreferredSize(new Dimension(360, 100));
 
-        txtUsername = new JTextField();
-        txtUsername.setBounds(110, 20, 200, 28);
-        txtUsername.setFont(new Font("Arial", Font.PLAIN, 13));
-        formPanel.add(txtUsername);
+        // Icon circle
+        JLabel iconLbl = new JLabel("🔍", SwingConstants.CENTER) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255, 45));
+                g2.fillOval(0, 0, getWidth(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        iconLbl.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 30));
+        iconLbl.setForeground(Color.WHITE);
+        iconLbl.setPreferredSize(new Dimension(60, 60));
+        iconLbl.setOpaque(false);
 
-        JLabel lblPass = new JLabel("Password:");
-        lblPass.setFont(new Font("Arial", Font.PLAIN, 13));
-        lblPass.setBounds(20, 60, 90, 25);
-        formPanel.add(lblPass);
+        JLabel appTitle = new JLabel("Lost & Found", SwingConstants.CENTER);
+        appTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        appTitle.setForeground(Color.WHITE);
 
-        txtPassword = new JPasswordField();
-        txtPassword.setBounds(110, 60, 200, 28);
-        txtPassword.setFont(new Font("Arial", Font.PLAIN, 13));
-        formPanel.add(txtPassword);
+        JLabel appSub = new JLabel("Campus Item Tracker", SwingConstants.CENTER);
+        appSub.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        appSub.setForeground(new Color(200, 220, 255));
 
-        btnLogin = new JButton("Login");
-        btnLogin.setBounds(30, 105, 120, 33);
-        btnLogin.setBackground(new Color(30, 60, 114));
-        btnLogin.setForeground(Color.WHITE);
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLogin.setFocusPainted(false);
-        btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        formPanel.add(btnLogin);
+        JPanel titleStack = new JPanel();
+        titleStack.setLayout(new BoxLayout(titleStack, BoxLayout.Y_AXIS));
+        titleStack.setOpaque(false);
+        appTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        appSub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        iconLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titleStack.add(Box.createVerticalStrut(16));
+        titleStack.add(iconLbl);
+        titleStack.add(Box.createVerticalStrut(6));
+        titleStack.add(appTitle);
+        titleStack.add(Box.createVerticalStrut(4));
+        titleStack.add(appSub);
+        titleStack.add(Box.createVerticalStrut(16));
+        cardHeader.add(titleStack, BorderLayout.CENTER);
 
-        btnRegister = new JButton("Register");
-        btnRegister.setBounds(180, 105, 120, 33);
-        btnRegister.setBackground(new Color(60, 160, 80));
-        btnRegister.setForeground(Color.WHITE);
-        btnRegister.setFont(new Font("Arial", Font.BOLD, 13));
-        btnRegister.setFocusPainted(false);
-        btnRegister.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        formPanel.add(btnRegister);
+        // ---- Form panel ----
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
+        formPanel.setBorder(new EmptyBorder(24, 32, 10, 32));
 
-        lblMessage = new JLabel("", SwingConstants.CENTER);
-        lblMessage.setFont(new Font("Arial", Font.ITALIC, 11));
-        lblMessage.setForeground(Color.RED);
-        lblMessage.setBounds(0, 145, 340, 20);
-        formPanel.add(lblMessage);
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 1.0;
+        gc.gridx = 0;
+        gc.insets = new Insets(0, 0, 4, 0);
 
-        setContentPane(mainPanel);
+        int row = 0;
 
-        // Button Actions
+        // Username label
+        gc.gridy = row++;
+        formPanel.add(fieldLabel("Username"), gc);
+
+        // Username field
+        gc.gridy = row++;
+        gc.insets = new Insets(0, 0, 14, 0);
+        txtUsername = styledField("Enter your username");
+        formPanel.add(txtUsername, gc);
+
+        // Password label
+        gc.gridy = row++;
+        gc.insets = new Insets(0, 0, 4, 0);
+        formPanel.add(fieldLabel("Password"), gc);
+
+        // Password field + toggle wrapper
+        gc.gridy = row++;
+        gc.insets = new Insets(0, 0, 6, 0);
+        txtPassword = styledPasswordField();
+        formPanel.add(wrapPasswordToggle(txtPassword), gc);
+
+        // Error label
+        gc.gridy = row++;
+        gc.insets = new Insets(0, 0, 14, 0);
+        lblError = new JLabel(" ");
+        lblError.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        lblError.setForeground(ERROR_CLR);
+        lblError.setHorizontalAlignment(SwingConstants.CENTER);
+        formPanel.add(lblError, gc);
+
+        // Login button
+        gc.gridy = row++;
+        gc.insets = new Insets(0, 0, 10, 0);
+        btnLogin = bigBtn("→  Sign In", ACCENT, ACCENT_HOV);
+        formPanel.add(btnLogin, gc);
+
+        // Register button
+        gc.gridy = row++;
+        gc.insets = new Insets(0, 0, 0, 0);
+        btnRegister = bigBtn("＋  Create Account", REG_COLOR, REG_HOV);
+        formPanel.add(btnRegister, gc);
+
+        // ---- Footer hint ----
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 8));
+        footerPanel.setOpaque(false);
+        JLabel hint = new JLabel("Default admin: admin / admin123");
+        hint.setFont(new Font("Segoe UI", Font.ITALIC, 10));
+        hint.setForeground(new Color(160, 175, 200));
+        footerPanel.add(hint);
+
+        card.add(cardHeader, BorderLayout.NORTH);
+        card.add(formPanel, BorderLayout.CENTER);
+        card.add(footerPanel, BorderLayout.SOUTH);
+
+        // drop shadow effect via compound border on card wrapper
+        JPanel cardWrap = new JPanel(new BorderLayout());
+        cardWrap.setOpaque(false);
+        cardWrap.setBorder(BorderFactory.createEmptyBorder(6, 6, 10, 6));
+        cardWrap.add(card);
+
+        root.add(cardWrap);
+        setContentPane(root);
+
+        // ---- Actions ----
         btnLogin.addActionListener(e -> doLogin());
         btnRegister.addActionListener(e -> doRegister());
+        getRootPane().setDefaultButton(btnLogin);
 
-        // Allow Enter key on password field to login
+        txtUsername.addActionListener(e -> txtPassword.requestFocus());
         txtPassword.addActionListener(e -> doLogin());
     }
+
+    // ---- UI helpers ----
+
+    private JLabel fieldLabel(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        l.setForeground(LABEL_CLR);
+        return l;
+    }
+
+    private JTextField styledField(String placeholder) {
+        JTextField f = new JTextField() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (getText().isEmpty() && !isFocusOwner()) {
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setColor(new Color(180, 190, 210));
+                    g2.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+                    g2.drawString(placeholder, 12, 20);
+                }
+            }
+        };
+        f.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        f.setBackground(INPUT_BG);
+        f.setForeground(new Color(30, 40, 70));
+        f.setCaretColor(ACCENT);
+        f.setBorder(new CompoundBorder(
+                new LineBorder(INPUT_BDR, 1, true),
+                new EmptyBorder(8, 12, 8, 12)));
+        f.setPreferredSize(new Dimension(280, 38));
+
+        // focus highlight
+        f.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+                f.setBorder(new CompoundBorder(
+                        new LineBorder(ACCENT, 2, true),
+                        new EmptyBorder(7, 11, 7, 11)));
+            }
+
+            public void focusLost(FocusEvent e) {
+                f.setBorder(new CompoundBorder(
+                        new LineBorder(INPUT_BDR, 1, true),
+                        new EmptyBorder(8, 12, 8, 12)));
+            }
+        });
+        return f;
+    }
+
+    private JPasswordField styledPasswordField() {
+        JPasswordField f = new JPasswordField();
+        f.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        f.setBackground(INPUT_BG);
+        f.setForeground(new Color(30, 40, 70));
+        f.setCaretColor(ACCENT);
+        f.setEchoChar('●');
+        f.setBorder(new CompoundBorder(
+                new LineBorder(INPUT_BDR, 1, true),
+                new EmptyBorder(8, 12, 8, 12)));
+        f.setPreferredSize(new Dimension(240, 38));
+
+        f.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+                f.setBorder(new CompoundBorder(
+                        new LineBorder(ACCENT, 2, true),
+                        new EmptyBorder(7, 11, 7, 11)));
+            }
+
+            public void focusLost(FocusEvent e) {
+                f.setBorder(new CompoundBorder(
+                        new LineBorder(INPUT_BDR, 1, true),
+                        new EmptyBorder(8, 12, 8, 12)));
+            }
+        });
+        return f;
+    }
+
+    private JPanel wrapPasswordToggle(JPasswordField field) {
+        JPanel wrap = new JPanel(new BorderLayout(0, 0));
+        wrap.setOpaque(false);
+        wrap.setPreferredSize(new Dimension(280, 38));
+
+        JButton eye = new JButton("👁") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(230, 235, 248));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        eye.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
+        eye.setFocusPainted(false);
+        eye.setBorderPainted(false);
+        eye.setContentAreaFilled(false);
+        eye.setOpaque(false);
+        eye.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        eye.setToolTipText("Show/Hide password");
+        eye.setPreferredSize(new Dimension(38, 38));
+        eye.setMargin(new Insets(0, 0, 0, 0));
+
+        eye.addActionListener(e -> {
+            if (field.getEchoChar() == 0) {
+                field.setEchoChar('●');
+                eye.setToolTipText("Show password");
+            } else {
+                field.setEchoChar((char) 0);
+                eye.setToolTipText("Hide password");
+            }
+        });
+
+        wrap.add(field, BorderLayout.CENTER);
+        wrap.add(eye, BorderLayout.EAST);
+        return wrap;
+    }
+
+    private JButton bigBtn(String text, Color bg, Color hov) {
+        JButton b = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+        };
+        b.setBackground(bg);
+        b.setForeground(Color.WHITE);
+        b.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        b.setFocusPainted(false);
+        b.setBorderPainted(false);
+        b.setContentAreaFilled(false);
+        b.setPreferredSize(new Dimension(280, 42));
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                b.setBackground(hov);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                b.setBackground(bg);
+            }
+        });
+        return b;
+    }
+
+    // ---- Logic ----
 
     private void doLogin() {
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword()).trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            lblMessage.setText("Please enter username and password.");
+            showError("Please enter both username and password.");
             return;
         }
 
         User user = DataManager.login(username, password);
         if (user != null) {
-            lblMessage.setForeground(new Color(0, 140, 0));
-            lblMessage.setText("Login successful! Opening dashboard...");
-            Timer timer = new Timer(800, evt -> {
-                dispose();
-                DashboardFrame dash = new DashboardFrame(user);
-                dash.setVisible(true);
-            });
-            timer.setRepeats(false);
-            timer.start();
+            lblError.setText(" ");
+            dispose();
+            new DashboardFrame(user).setVisible(true);
         } else {
-            lblMessage.setForeground(Color.RED);
-            lblMessage.setText("Invalid username or password.");
+            showError("Invalid username or password. Please try again.");
             txtPassword.setText("");
+            txtPassword.requestFocus();
         }
     }
 
@@ -128,21 +392,30 @@ public class LoginFrame extends JFrame {
         String password = new String(txtPassword.getPassword()).trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            lblMessage.setText("Fill both fields to register.");
+            showError("Enter a username and password to register.");
+            return;
+        }
+        if (username.length() < 3) {
+            showError("Username must be at least 3 characters.");
             return;
         }
         if (password.length() < 4) {
-            lblMessage.setText("Password must be at least 4 characters.");
+            showError("Password must be at least 4 characters.");
             return;
         }
 
-        boolean success = DataManager.registerUser(username, password);
-        if (success) {
-            lblMessage.setForeground(new Color(0, 140, 0));
-            lblMessage.setText("Registered! You can now login.");
+        boolean ok = DataManager.registerUser(username, password);
+        if (ok) {
+            lblError.setForeground(new Color(30, 140, 80));
+            lblError.setText("Account created! You can now sign in.");
+            txtPassword.setText("");
         } else {
-            lblMessage.setForeground(Color.RED);
-            lblMessage.setText("Username already taken. Try another.");
+            showError("Username \"" + username + "\" is already taken.");
         }
+    }
+
+    private void showError(String msg) {
+        lblError.setForeground(ERROR_CLR);
+        lblError.setText(msg);
     }
 }
