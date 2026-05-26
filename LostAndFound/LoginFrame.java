@@ -11,7 +11,6 @@ public class LoginFrame extends JFrame {
     private JButton btnLogin, btnRegister;
     private JLabel lblError;
 
-    // ---- Theme colours ----
     private static final Color DARK_BG = new Color(15, 35, 80);
     private static final Color CARD_BG = new Color(255, 255, 255);
     private static final Color ACCENT = new Color(25, 95, 210);
@@ -30,7 +29,6 @@ public class LoginFrame extends JFrame {
         setSize(440, 560);
         setLocationRelativeTo(null);
 
-        // ---- Root panel with dark gradient background ----
         JPanel root = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -46,7 +44,6 @@ public class LoginFrame extends JFrame {
         };
         root.setOpaque(true);
 
-        // ---- Card panel ----
         JPanel card = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -65,7 +62,6 @@ public class LoginFrame extends JFrame {
         card.setPreferredSize(new Dimension(360, 460));
         card.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // ---- Card header (top coloured strip) ----
         JPanel cardHeader = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -85,7 +81,6 @@ public class LoginFrame extends JFrame {
         };
         cardHeader.setPreferredSize(new Dimension(360, 100));
 
-        // Icon circle
         JLabel iconLbl = new JLabel("🔍", SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -125,7 +120,6 @@ public class LoginFrame extends JFrame {
         titleStack.add(Box.createVerticalStrut(16));
         cardHeader.add(titleStack, BorderLayout.CENTER);
 
-        // ---- Form panel ----
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setOpaque(false);
         formPanel.setBorder(new EmptyBorder(24, 32, 10, 32));
@@ -138,28 +132,23 @@ public class LoginFrame extends JFrame {
 
         int row = 0;
 
-        // Username label
         gc.gridy = row++;
         formPanel.add(fieldLabel("Username"), gc);
 
-        // Username field
         gc.gridy = row++;
         gc.insets = new Insets(0, 0, 14, 0);
         txtUsername = styledField("Enter your username");
         formPanel.add(txtUsername, gc);
 
-        // Password label
         gc.gridy = row++;
         gc.insets = new Insets(0, 0, 4, 0);
         formPanel.add(fieldLabel("Password"), gc);
 
-        // Password field + toggle wrapper
         gc.gridy = row++;
         gc.insets = new Insets(0, 0, 6, 0);
         txtPassword = styledPasswordField();
         formPanel.add(wrapPasswordToggle(txtPassword), gc);
 
-        // Error label
         gc.gridy = row++;
         gc.insets = new Insets(0, 0, 14, 0);
         lblError = new JLabel(" ");
@@ -168,19 +157,16 @@ public class LoginFrame extends JFrame {
         lblError.setHorizontalAlignment(SwingConstants.CENTER);
         formPanel.add(lblError, gc);
 
-        // Login button
         gc.gridy = row++;
         gc.insets = new Insets(0, 0, 10, 0);
         btnLogin = bigBtn("→  Sign In", ACCENT, ACCENT_HOV);
         formPanel.add(btnLogin, gc);
 
-        // Register button
         gc.gridy = row++;
         gc.insets = new Insets(0, 0, 0, 0);
         btnRegister = bigBtn("＋  Create Account", REG_COLOR, REG_HOV);
         formPanel.add(btnRegister, gc);
 
-        // ---- Footer hint ----
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 8));
         footerPanel.setOpaque(false);
         JLabel hint = new JLabel("Default admin: admin / admin123");
@@ -192,7 +178,6 @@ public class LoginFrame extends JFrame {
         card.add(formPanel, BorderLayout.CENTER);
         card.add(footerPanel, BorderLayout.SOUTH);
 
-        // drop shadow effect via compound border on card wrapper
         JPanel cardWrap = new JPanel(new BorderLayout());
         cardWrap.setOpaque(false);
         cardWrap.setBorder(BorderFactory.createEmptyBorder(6, 6, 10, 6));
@@ -201,7 +186,6 @@ public class LoginFrame extends JFrame {
         root.add(cardWrap);
         setContentPane(root);
 
-        // ---- Actions ----
         btnLogin.addActionListener(e -> doLogin());
         btnRegister.addActionListener(e -> doRegister());
         getRootPane().setDefaultButton(btnLogin);
@@ -209,8 +193,6 @@ public class LoginFrame extends JFrame {
         txtUsername.addActionListener(e -> txtPassword.requestFocus());
         txtPassword.addActionListener(e -> doLogin());
     }
-
-    // ---- UI helpers ----
 
     private JLabel fieldLabel(String text) {
         JLabel l = new JLabel(text);
@@ -241,7 +223,6 @@ public class LoginFrame extends JFrame {
                 new EmptyBorder(8, 12, 8, 12)));
         f.setPreferredSize(new Dimension(280, 38));
 
-        // focus highlight
         f.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
                 f.setBorder(new CompoundBorder(
@@ -363,8 +344,6 @@ public class LoginFrame extends JFrame {
         });
         return b;
     }
-
-    // ---- Logic ----
 
     private void doLogin() {
         String username = txtUsername.getText().trim();

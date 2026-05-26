@@ -39,8 +39,6 @@ public class DataManager {
                 "Canteen", "Claimed", "2025-03-28", "Admin", "9000000000", "admin"));
     }
 
-    // ---- AUTH ----
-
     public static User login(String username, String password) {
         for (User u : users) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
@@ -68,8 +66,6 @@ public class DataManager {
         }
         return false;
     }
-
-    // ---- USER MANAGEMENT ----
 
     public static List<User> getAllUsers() {
         return new ArrayList<>(users);
@@ -107,8 +103,6 @@ public class DataManager {
         return null;
     }
 
-    // ---- ITEM CRUD ----
-
     public static List<Item> getAllItems() {
         return new ArrayList<>(items);
     }
@@ -132,8 +126,6 @@ public class DataManager {
     public static int getNextId() {
         return nextId++;
     }
-
-    // ---- FILTERS ----
 
     public static List<Item> getLostItems() {
         return items.stream().filter(i -> "Lost".equals(i.getStatus())).collect(Collectors.toList());
@@ -166,8 +158,6 @@ public class DataManager {
         return items.stream().filter(i -> username.equals(i.getReportedBy())).collect(Collectors.toList());
     }
 
-    // ---- STATISTICS ----
-
     public static int countTotal() {
         return items.size();
     }
@@ -188,12 +178,9 @@ public class DataManager {
         return users.size();
     }
 
-    // Category count
     public static int countByCategory(String category) {
         return (int) items.stream().filter(i -> i.getCategory().equals(category)).count();
     }
-
-    // ---- EXPORT ----
 
     public static String exportToCSV(List<Item> list) {
         StringBuilder sb = new StringBuilder();

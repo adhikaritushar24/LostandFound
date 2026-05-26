@@ -7,7 +7,6 @@ import java.util.List;
 
 public class DashboardFrame extends JFrame {
 
-    // ---- Theme ----
     static final Color PRIMARY = new Color(25, 55, 120);
     static final Color DANGER = new Color(192, 57, 43);
     static final Color SUCCESS = new Color(39, 174, 96);
@@ -43,13 +42,11 @@ public class DashboardFrame extends JFrame {
         refreshTable();
     }
 
-    // ===== TOP BAR =====
     private JPanel buildTopBar() {
         JPanel bar = new JPanel(new BorderLayout());
         bar.setBackground(PRIMARY);
         bar.setBorder(BorderFactory.createEmptyBorder(8, 14, 8, 14));
 
-        // Left: icon + title
         JLabel lbl = new JLabel("🔍  Lost & Found  —  " +
                 user("Welcome, ") + currentUser.getUsername().toUpperCase() +
                 (isAdmin() ? "  [ADMIN]" : "  [User]"));
@@ -57,7 +54,6 @@ public class DashboardFrame extends JFrame {
         lbl.setForeground(Color.WHITE);
         bar.add(lbl, BorderLayout.WEST);
 
-        // Right: buttons
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
         right.setOpaque(false);
 
@@ -112,7 +108,6 @@ public class DashboardFrame extends JFrame {
         return b;
     }
 
-    // ===== CENTER (filter + table + buttons) =====
     private JPanel buildCenter() {
         JPanel center = new JPanel(new BorderLayout(0, 0));
         center.setBackground(BG);
@@ -122,7 +117,6 @@ public class DashboardFrame extends JFrame {
         return center;
     }
 
-    // ===== FILTER BAR =====
     private JPanel buildFilterBar() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         bar.setBackground(new Color(235, 240, 252));
@@ -161,7 +155,6 @@ public class DashboardFrame extends JFrame {
         lblCount.setForeground(new Color(80, 100, 130));
         bar.add(lblCount);
 
-        // Live search
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 refreshTable();
@@ -181,7 +174,6 @@ public class DashboardFrame extends JFrame {
         return bar;
     }
 
-    // ===== TABLE =====
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
             @Override
@@ -259,7 +251,6 @@ public class DashboardFrame extends JFrame {
             }
         });
 
-        // Sortable columns
         table.setRowSorter(new TableRowSorter<>(tableModel));
 
         JScrollPane scroll = new JScrollPane(table);
@@ -267,7 +258,6 @@ public class DashboardFrame extends JFrame {
         return scroll;
     }
 
-    // ===== BUTTON BAR =====
     private JPanel buildBtnBar() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 10));
         panel.setBackground(new Color(235, 240, 252));
@@ -321,8 +311,6 @@ public class DashboardFrame extends JFrame {
         });
         return b;
     }
-
-    // ===== LOGIC =====
 
     void refreshTable() {
         tableModel.setRowCount(0);

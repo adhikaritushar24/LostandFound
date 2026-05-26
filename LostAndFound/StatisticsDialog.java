@@ -12,7 +12,6 @@ public class StatisticsDialog extends JDialog {
         setLocationRelativeTo(parent);
         setResizable(true);
 
-        // Fetch data
         int total = DataManager.countTotal();
         int lost = DataManager.countLost();
         int found = DataManager.countFound();
@@ -22,7 +21,6 @@ public class StatisticsDialog extends JDialog {
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(DashboardFrame.BG);
 
-        // ---- Header ----
         JPanel header = new JPanel();
         header.setBackground(new Color(40, 120, 170));
         header.setBorder(BorderFactory.createEmptyBorder(14, 0, 14, 0));
@@ -32,13 +30,11 @@ public class StatisticsDialog extends JDialog {
         header.add(title);
         root.add(header, BorderLayout.NORTH);
 
-        // ---- Scrollable content ----
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(DashboardFrame.BG);
         content.setBorder(new EmptyBorder(16, 20, 16, 20));
 
-        // --- Summary cards row ---
         JPanel cardRow = new JPanel(new GridLayout(1, 3, 12, 0));
         cardRow.setOpaque(false);
         cardRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
@@ -48,7 +44,6 @@ public class StatisticsDialog extends JDialog {
         content.add(cardRow);
         content.add(Box.createVerticalStrut(18));
 
-        // --- Status section ---
         content.add(sectionLabel("Item Status Breakdown"));
         content.add(Box.createVerticalStrut(8));
         content.add(statRow("🔴  Lost", lost, total, new Color(192, 57, 43)));
@@ -58,7 +53,6 @@ public class StatisticsDialog extends JDialog {
         content.add(statRow("✅  Claimed", claimed, total, new Color(180, 100, 10)));
         content.add(Box.createVerticalStrut(18));
 
-        // --- Resolution rate ---
         content.add(sectionLabel("Resolution Rate"));
         content.add(Box.createVerticalStrut(8));
         int resolved = found + claimed;
@@ -74,7 +68,6 @@ public class StatisticsDialog extends JDialog {
         content.add(resBar);
         content.add(Box.createVerticalStrut(18));
 
-        // --- Category breakdown ---
         content.add(sectionLabel("Category Breakdown"));
         content.add(Box.createVerticalStrut(8));
         String[] categories = { "Electronics", "Accessory", "Book/Stationery", "Clothing", "ID/Documents", "Other" };
@@ -128,8 +121,6 @@ public class StatisticsDialog extends JDialog {
         setContentPane(root);
     }
 
-    // ---- UI helpers ----
-
     private JPanel summaryCard(String label, int value, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(color);
@@ -160,7 +151,6 @@ public class StatisticsDialog extends JDialog {
         return l;
     }
 
-    /** A row with label, count, and a proportional progress bar */
     private JPanel statRow(String label, int count, int total, Color color) {
         JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setOpaque(false);
